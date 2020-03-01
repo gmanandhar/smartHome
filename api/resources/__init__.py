@@ -18,7 +18,7 @@ restServer.add_resource(UpdateUser,"/api/user/update/<int:id>", endpoint = 'upda
 restServer.add_resource(GetServiceById,"/api/service/<id>",  endpoint = 'getServiceById')
 restServer.add_resource(GetService,"/api/service/",  endpoint = 'getService')
 restServer.add_resource(AddService,"/api/service", endpoint = 'AddService')
-restServer.add_resource(DeleteService,"/api/service/<int:id>", endpoint = 'deleteService')
+restServer.add_resource(DeleteService,"/api/service/delete/<int:id>", endpoint = 'deleteService')
 
 #User Mapping
 restServer.add_resource(GetMapById,"/api/map/<id>",  endpoint = 'GetMapById')
