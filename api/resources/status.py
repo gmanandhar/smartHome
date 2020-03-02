@@ -4,12 +4,15 @@ from api.models import Status as sts
 from flask  import request, jsonify
 from .token import Token
 import datetime
+from .task import add_task
+from api import q
+from rq import cancel_job
 
 
 class GetStatusById(Resource):
     @Token.token_required
     def get(self,current_user,id):
-        logger.debug("Inside the get method")
+        logger.debug("Return Status by ID")
         status_instance = sts.Status.query.get(id)
         return sts.status_schema.jsonify(status_instance)
         # return {"message":"This is get Method >>>>" + id},200
@@ -18,7 +21,7 @@ class GetStatusById(Resource):
 class GetStatus(Resource):
     @Token.token_required
     def get(self,current_user):
-        logger.debug("Inside the get method")
+        logger.debug("Return all status of table")
         all_status = sts.Status.query.all()
         result = sts.statuss_schema.dump(all_status)
         return jsonify(result)
@@ -26,16 +29,49 @@ class GetStatus(Resource):
 class AddStatus(Resource):
     @Token.token_required
     def post(self,current_user):
-        logger.debug("Inside the POST method")
+        logger.debug("Update Status Table")
         publicId= Token.publicId(self)
         sId= request.json['sId']
         status= request.json['status']
         currentDate= datetime.datetime.utcnow()
         futureDate= request.json['futureDate']
+        sts_ins =sts.Status.query.filter_by(sId=sId).first()
+        if  not sts_ins == None:
+            if sts_ins.status == True and status == 1:
+                return {"message":"Device is already ON!!"},200
+            elif sts_ins.status == False and status == 0:
+                return {"message":"Device is already OFF!!"},200
+            elif sts_ins.status == True and status == 0:
+                can_job = cancel_job(sts_ins.jobId)
+                if can_job == True:
+                    sts.db.session.commit()
+                    sts_ins.publicId = publicId
+                    sts_ins.status = status
+                    sts_ins.currentDate = currentDate
+                    sts_ins.futureDate = currentDate
 
-        new_status = sts.Status(publicId, sId, status,currentDate,futureDate)
-        sts.db.session.add(new_status)
-        sts.db.session.commit()
+                return {"message":"Device trun off Forcely!!"}
+            else:
+                sts_ins.publicId = publicId
+                sts_ins.status = status
+                sts_ins.currentDate = currentDate
+                sts_ins.futureDate = futureDate
+                task = q.enqueue(add_task, futureDate)
+                sts_ins.jobId = task.id
+                sts.db.session.commit()
+                return {"message":"Device trun ON Sucessfully!!"}
+        else:
+            if status == 0:
+                return {"message":"Device is already in OFF Status!!"}
+            else:
+                sts_ins.publicId = publicId
+                sts_ins.status = status
+                sts_ins.currentDate = currentDate
+                sts_ins.futureDate = futureDate
+                task = q.enqueue(add_task, futureDate)
+                sts_ins.jobId = task.id
+                sts.db.session.commit()
+                return {"message":"Device is ON"}
 
         return sts.status_schema.jsonify(new_status)
 
