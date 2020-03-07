@@ -1,12 +1,13 @@
 from flask_restful import Resource
 import logging as logger
-from api.models import Status as sts
+from api.models import Status as sts, pi,service as svc
 from flask  import request, jsonify
 from .token import Token
 import datetime
 from .task import add_task
 from api import q
 from rq import cancel_job
+from .resPI import resPi
 
 
 class GetStatusById(Resource):
@@ -36,6 +37,7 @@ class AddStatus(Resource):
         currentDate= datetime.datetime.utcnow()
         futureDate= request.json['futureDate']
         sts_ins =sts.Status.query.filter_by(sId=sId).first()
+        svc_ins = svc.Service.query.filter_by(sId = sId).first()
         if  not sts_ins == None:
             if sts_ins.status == True and status == 1:
                 return {"message":"Device is already ON!!"},200
@@ -44,21 +46,24 @@ class AddStatus(Resource):
             elif sts_ins.status == True and status == 0:
                 can_job = cancel_job(sts_ins.jobId)
                 if can_job == True:
-                    sts.db.session.commit()
                     sts_ins.publicId = publicId
                     sts_ins.status = status
                     sts_ins.currentDate = currentDate
                     sts_ins.futureDate = currentDate
-
+                    if not resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                        sts.db.session.commit()
+                        logger.debug("Respeberry Pi has been off Sucessuflly !!")
                 return {"message":"Device trun off Forcely!!"}
             else:
                 sts_ins.publicId = publicId
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                task = q.enqueue(add_task, futureDate)
-                sts_ins.jobId = task.id
-                sts.db.session.commit()
+                if resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                    task = q.enqueue(add_task, futureDate)
+                    sts_ins.jobId = task.id
+                    sts.db.session.commit()
+                    logger.debug("Respeberry Pi has been on Sucessuflly !!")
                 return {"message":"Device trun ON Sucessfully!!"}
         else:
             if status == 0:
@@ -68,9 +73,11 @@ class AddStatus(Resource):
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                task = q.enqueue(add_task, futureDate)
-                sts_ins.jobId = task.id
-                sts.db.session.commit()
+                if resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                    task = q.enqueue(add_task, futureDate)
+                    sts_ins.jobId = task.id
+                    sts.db.session.commit()
+                    logger.debug("Respeberry Pi has been on Sucessuflly !!")
                 return {"message":"Device is ON"}
 
         return sts.status_schema.jsonify(new_status)
