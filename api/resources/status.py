@@ -1,6 +1,6 @@
 from flask_restful import Resource
 import logging as logger
-from api.models import Status as sts, pi,service as svc
+from api.models import Status as sts,service as svc
 from flask  import request, jsonify
 from .token import Token
 import datetime
