@@ -24,8 +24,7 @@ class UserLogin(Resource):
             token = jwt.encode({'publicId':user_ins.publicId, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},app.config['SECRET_KEY'])
             user_ins.token = token.decode('UTF-8')
             user.db.session.commit()
-            #return jsonify({'token':token.decode('UTF-8')})
-            return user_ins
+            return jsonify({'token':token.decode('UTF-8')})
         return make_response('Could not verify', 401, {'WWW-Authentication': 'Basic-realm="Login Required"'})
 
 #Method to get user by ID
