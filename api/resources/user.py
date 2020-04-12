@@ -12,7 +12,7 @@ from .token import Token, LogoutUser
 #Method to login into API
 class UserLogin(Resource):
 
-    def get(self):
+    def post(self):
         auth = request.authorization
         if not auth or not auth.username or not auth.password:
             return make_response('Could not verify', 401, {'WWW-Authentication':'Basic-realm="Login Required"'})
@@ -24,7 +24,8 @@ class UserLogin(Resource):
             token = jwt.encode({'publicId':user_ins.publicId, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},app.config['SECRET_KEY'])
             user_ins.token = token.decode('UTF-8')
             user.db.session.commit()
-            return jsonify({'token':token.decode('UTF-8')})
+            #return jsonify({'token':token.decode('UTF-8')})
+            return user_ins
         return make_response('Could not verify', 401, {'WWW-Authentication': 'Basic-realm="Login Required"'})
 
 #Method to get user by ID
