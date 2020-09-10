@@ -37,7 +37,7 @@ class AddStatus(Resource):
         currentDate= datetime.datetime.utcnow()
         futureDate= request.json['futureDate']
         sts_ins =sts.Status.query.filter_by(sId=sId).first()
-        svc_ins = svc.Service.query.filter_by(sId = sId).first()
+        svc_ins = svc.Service.query.filter_by(svcId = sId).first()
         if  not sts_ins == None:
             if sts_ins.status == True and status == 1:
                 return {"message":"Device is already ON!!"},200
