@@ -50,7 +50,7 @@ class AddStatus(Resource):
                     sts_ins.status = status
                     sts_ins.currentDate = currentDate
                     sts_ins.futureDate = currentDate
-                    if not resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                    if not resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
                         sts.db.session.commit()
                         logger.debug("Respeberry Pi has been off Sucessuflly !!")
                 return {"message":"Device trun off Forcely!!"}
@@ -59,7 +59,7 @@ class AddStatus(Resource):
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                if resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                if resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
                     task = q.enqueue(add_task, futureDate)
                     sts_ins.jobId = task.id
                     sts.db.session.commit()
@@ -73,7 +73,7 @@ class AddStatus(Resource):
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                if resPi(svc_ins.pinIn, svc_ins.pinOut, status):
+                if resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
                     task = q.enqueue(add_task, futureDate)
                     sts_ins.jobId = task.id
                     sts.db.session.commit()
