@@ -38,6 +38,9 @@ class AddStatus(Resource):
         futureDate= request.json['futureDate']
         sts_ins =sts.Status.query.filter_by(sId=sId).first()
         svc_ins = svc.Service.query.filter_by(svcId = sId).first()
+        IN = svc_ins.pinIn if not svc_ins.pinIn == "" else svc_ins.pinIn = 0
+        OUT = svc_ins.pinOut if not svc_ins.pinOut == "" else svc_ins.pinOut = 0
+
         if  not sts_ins == None:
             if sts_ins.status == True and status == 1:
                 return {"message":"Device is already ON!!"},200
@@ -50,7 +53,7 @@ class AddStatus(Resource):
                     sts_ins.status = status
                     sts_ins.currentDate = currentDate
                     sts_ins.futureDate = currentDate
-                    if not resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
+                    if not resPi(IN, OUT, status):
                         sts.db.session.commit()
                         logger.debug("Respeberry Pi has been off Sucessuflly !!")
                 return {"message":"Device trun off Forcely!!"}
@@ -59,7 +62,7 @@ class AddStatus(Resource):
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                if resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
+                if resPi(IN, OUT, status):
                     task = q.enqueue(add_task, futureDate)
                     sts_ins.jobId = task.id
                     sts.db.session.commit()
@@ -73,7 +76,8 @@ class AddStatus(Resource):
                 sts_ins.status = status
                 sts_ins.currentDate = currentDate
                 sts_ins.futureDate = futureDate
-                if resPi(int(svc_ins.pinIn), int(svc_ins.pinOut), status):
+
+                if resPi(IN, OUT, status):
                     task = q.enqueue(add_task, futureDate)
                     sts_ins.jobId = task.id
                     sts.db.session.commit()
