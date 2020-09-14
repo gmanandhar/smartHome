@@ -38,7 +38,8 @@ class AddStatus(Resource):
         futureDate= request.json['futureDate']
         sts_ins =sts.Status.query.filter_by(sId=sId).first()
         svc_ins = svc.Service.query.filter_by(svcId = sId).first()
-        IN, OUT=0
+        IN=0
+        OUT=0
         if not svc_ins.pinIn == "":
             IN=svc_ins.pinIn
         if not svc_ins.pinOut=="":
