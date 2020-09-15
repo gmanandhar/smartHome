@@ -15,14 +15,11 @@ def resPi(pinIn, pinOut, status):
         print("---------  Pin select for Output  ---------------")
     # Input from pin 11
     pinStatus = pi.input(pinIn)
-    print(pinStatus,">>")
     if not pinStatus:
-        print("condition is false")
-        pi.output(pinOut, sts)
+        pi.output(pinIn, sts)
         pi.cleanup()
         return False
     else:
-        print("Condition is True")
-        pi.output(pinOut, sts)
+        pi.output(pinIn, sts)
         pi.cleanup()
         return True
