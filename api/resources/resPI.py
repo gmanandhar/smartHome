@@ -2,9 +2,9 @@ from api.models import pi
 
 def resPi(pinIn, pinOut, status):
     sts = True
-    print("PIN IN >>" + pinIn)
-    print("PIN Out >>" + pinOut)
-    print("Status >>" + status)
+    print("PIN IN >>", pinIn)
+    print("PIN Out >>" , pinOut)
+    print("Status >>" ,status)
     if status== 1:
         sts = False
     if pinOut == 0:
