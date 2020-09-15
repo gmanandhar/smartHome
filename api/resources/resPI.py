@@ -17,7 +17,9 @@ def resPi(pinIn, pinOut, status):
     pinStatus = pi.input(pinIn)
     if not pinStatus:
         pi.output(pinOut, sts)
+        pi.cleanup()
         return False
     else:
         pi.output(pinOut, sts)
+        pi.cleanup()
         return True
