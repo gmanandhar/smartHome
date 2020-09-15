@@ -60,7 +60,7 @@ class AddStatus(Resource):
                     if not resPi(IN, OUT, status):
                         sts.db.session.commit()
                         logger.debug("Respeberry Pi has been off Sucessuflly !!")
-                return {"message":"Device trun off Forcely!!"}
+                return {"message":"Device turn off Forcely!!"}
             else:
                 sts_ins.publicId = publicId
                 sts_ins.status = status
@@ -71,7 +71,7 @@ class AddStatus(Resource):
                     sts_ins.jobId = task.id
                     sts.db.session.commit()
                     logger.debug("Respeberry Pi has been on Sucessuflly !!")
-                return {"message":"Device trun ON Sucessfully!!"}
+                return {"message":"Device turn ON Sucessfully!!"}
         else:
             if status == 0:
                 return {"message":"Device is already in OFF Status!!"}

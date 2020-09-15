@@ -1,16 +1,19 @@
 from api.models import pi
 
 def resPi(pinIn, pinOut, status):
-    sts = 1
+    sts = pi.LOW
     if status== 1:
-        sts = 0
-    pi.setup(pinIn, pi.IN)
-    pi.setup(pinOut, pi.OUT)
+        sts = pi.HIGH
+    pi.setmode(pi.BCM)
+    if pinOut == 0:
+        pi.setup(pinIn, pi.IN)
+    else:
+        pi.setup(pinIn, pi.OUT)
     # Input from pin 11
     pinStatus = pi.input(pinIn)
     if not pinStatus:
-        pi.setup(pinOut, sts)
+        pi.output(pinOut, sts)
         return False
     else:
-        pi.setup(pinOut, sts)
+        pi.output(pinOut, sts)
         return True
