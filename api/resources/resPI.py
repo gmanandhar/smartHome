@@ -4,7 +4,6 @@ def resPi(pinIn, pinOut, status):
     sts = pi.LOW
     if status== 1:
         sts = pi.HIGH
-    pi.setmode(pi.BCM)
     if pinOut == 0:
         pi.setup(pinIn, pi.IN)
     else:
