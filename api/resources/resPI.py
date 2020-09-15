@@ -9,8 +9,10 @@ def resPi(pinIn, pinOut, status):
         sts = False
     if pinOut == 0:
         pi.setup(pinIn, pi.IN)
+        print("---------  Pin select for Input  ---------------")
     else:
         pi.setup(pinIn, pi.OUT)
+        print("---------  Pin select for Output  ---------------")
     # Input from pin 11
     pinStatus = pi.input(pinIn)
     if not pinStatus:
