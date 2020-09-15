@@ -13,4 +13,5 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 #Initilized Mode
 pi= GPIO
-pi.setmode(GPIO.BOARD) # Select the interal board pins
+pi.setwarnings(False)
+pi.setmode(GPIO.BCM) # Select the interal board pins

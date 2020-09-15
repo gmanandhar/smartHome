@@ -1,9 +1,9 @@
 from api.models import pi
 
 def resPi(pinIn, pinOut, status):
-    sts = pi.LOW
+    sts = True
     if status== 1:
-        sts = pi.HIGH
+        sts = False
     if pinOut == 0:
         pi.setup(pinIn, pi.IN)
     else:
